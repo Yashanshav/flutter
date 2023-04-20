@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.unext.lumen">
+    package="com.application.yashanshav">
    <application
         android:label="counter"
         android:name="${applicationName}"

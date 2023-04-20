@@ -64,11 +64,28 @@ class _MyHomePageState extends State<MyHomePage> {
     await InAppUpdate.checkForUpdate().then((info) {
       setState(() {
         _updateInfo = info;
+        print("info: ${info}");
         print(_updateInfo);
       });
     }).catchError((e) {
       showSnack(e.toString());
     });
+  }
+
+  Future<void> piu() async {
+    if (_updateInfo?.updateAvailability == UpdateAvailability.updateAvailable) {
+      AppUpdateResult result = await InAppUpdate.startFlexibleUpdate()
+          .catchError((e) => showSnack(e.toString()));
+
+      print(result);
+
+      if (result == AppUpdateResult.success) {
+        InAppUpdate.completeFlexibleUpdate();
+        print("it is completed");
+      }
+    }
+
+    // Restart.restartApp();
   }
 
   void showSnack(String text) {
@@ -102,9 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             TextButton(
               child: const Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: piu,
             ),
           ],
         );
@@ -115,11 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     checkForUpdate();
-
-    if (_updateInfo?.updateAvailability.index ==
-        UpdateAvailability.updateAvailable.index) {
-      _showAlertDialog();
-    }
   }
 
   int _counter = 0;
@@ -170,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'You have pushed the button this many times:',
+              'Yashanshav and Aditya updated the app successfully:',
             ),
             Text(
               '$_counter',
@@ -180,7 +190,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _updateInfo?.updateAvailability ==
+                UpdateAvailability.updateAvailable
+            ? _showAlertDialog
+            : _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
